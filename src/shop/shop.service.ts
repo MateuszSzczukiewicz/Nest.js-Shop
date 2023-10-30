@@ -5,7 +5,8 @@ import {
 } from '../interfaces/shop';
 import { BasketService } from '../basket/basket.service';
 import { ShopItem } from './shop-item.entity';
-import { Like } from 'typeorm';
+import { getConnection, Like } from 'typeorm';
+import { ShopItemDetails } from './shop-item-details.entity';
 
 @Injectable()
 export class ShopService {
@@ -57,6 +58,16 @@ export class ShopService {
 
     await newItem.save();
 
+    const details = new ShopItemDetails();
+    details.color = 'red';
+    details.width = 10;
+
+    await details.save();
+
+    newItem.details = details;
+
+    await newItem.save();
+
     return newItem;
   }
 
@@ -73,6 +84,11 @@ export class ShopService {
   }
 
   async findProducts(searchTerm: string): Promise<GetListOfProductsResponse> {
+    await getConnection()
+      .createQueryBuilder()
+      .select('shopItem')
+      .from(ShopItem, 'shopItem');
+
     return await ShopItem.find({
       where: {
         description: Like(`%${searchTerm}%`),

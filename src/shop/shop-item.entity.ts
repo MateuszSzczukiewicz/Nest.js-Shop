@@ -1,4 +1,17 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  OneToMany,
+  ManyToMany,
+} from 'typeorm';
+import { ShopItemDetails } from './shop-item-details.entity';
+import { ShopSet } from './shop-set.entity';
+import { JoinTable } from 'typeorm/browser';
 
 @Entity()
 export class ShopItem extends BaseEntity {
@@ -38,4 +51,12 @@ export class ShopItem extends BaseEntity {
     default: false,
   })
   wasEverBought: boolean;
+
+  @OneToOne((type) => ShopItemDetails, { eager: true })
+  @JoinColumn()
+  details: ShopItemDetails;
+
+  @ManyToMany((type) => ShopSet, (entity) => entity.items)
+  @JoinTable()
+  sets: ShopSet[];
 }
