@@ -11,6 +11,7 @@ import {
   CreateNewProductResponse,
   GetListOfProductsResponse,
   GetOneProductResponse,
+  GetPaginatedListOfProductsResponse,
 } from '../interfaces/shop';
 import { ShopService } from './shop.service';
 
@@ -30,8 +31,15 @@ export class ShopController {
   constructor(@Inject('ShopService') private shopService: ShopService) {}
 
   @Get('/')
-  getListOfProducts(): Promise<GetListOfProductsResponse> {
+  getListOfProducts(): Promise<GetPaginatedListOfProductsResponse> {
     return this.shopService.getProducts();
+  }
+
+  @Get('/')
+  findItem(
+    @Param('searchTerm') searchTerm: string,
+  ): Promise<GetListOfProductsResponse> {
+    return this.shopService.findProducts();
   }
 
   @Get('/:id')
