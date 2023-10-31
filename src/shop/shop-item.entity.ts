@@ -2,61 +2,34 @@ import {
   BaseEntity,
   Column,
   Entity,
-  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
-  JoinColumn,
-  OneToMany,
-  ManyToMany,
 } from 'typeorm';
-import { ShopItemDetails } from './shop-item-details.entity';
-import { ShopSet } from './shop-set.entity';
-import { JoinTable } from 'typeorm/browser';
+import { ShopItemInterface } from '../interfaces/shop';
+import { ItemInBasket } from '../basket/item-in-basket.entity';
 
 @Entity()
-export class ShopItem extends BaseEntity {
+export class ShopItem extends BaseEntity implements ShopItemInterface {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
-    length: 60,
+    length: 50,
   })
   name: string;
 
   @Column({
-    length: 10000,
-    default: null,
-    nullable: true,
+    length: 1000,
   })
-  description: string | null;
+  description: string;
 
   @Column({
     type: 'float',
-    precision: 6,
+    precision: 7,
     scale: 2,
   })
   price: number;
 
-  @Column({
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  createdAt: Date;
-
-  @Column({
-    default: 0,
-  })
-  boughtCounter: number;
-
-  @Column({
-    default: false,
-  })
-  wasEverBought: boolean;
-
-  @OneToOne((type) => ShopItemDetails, { eager: true })
-  @JoinColumn()
-  details: ShopItemDetails;
-
-  @ManyToMany((type) => ShopSet, (entity) => entity.items)
-  @JoinTable()
-  sets: ShopSet[];
+  @OneToOne((type) => ItemInBasket, (entity) => entity.shopItem)
+  itemInBasket: ItemInBasket;
 }
